@@ -1,0 +1,65 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "job-matcher"
+version = "0.1.0"
+description = "Fetch job postings from several boards, filter cheaply, rank locally against a CV with embeddings, and send only the top candidates to Ollama Cloud for a final fit analysis."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [
+    { name = "Jorge" }
+]
+keywords = ["job-search", "github-actions", "ollama", "embeddings", "cv-matching"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+dependencies = [
+    "requests>=2.31",
+    "feedparser>=6.0",
+    "pyyaml>=6.0",
+    "sentence-transformers>=3.0",
+    "numpy>=1.26",
+    "ollama>=0.4.0",
+    "pypdf>=4.2",
+    "python-docx>=1.1",
+    "python-dateutil>=2.9",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-mock>=3.14",
+    "responses>=0.25",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+job-matcher = "job_matcher.main:main"
+
+[project.urls]
+Repository = "https://github.com/jorgegfx/job-matcher"
+
+[tool.setuptools.packages.find]
+include = ["job_matcher*"]
+
+[tool.setuptools.package-data]
+job_matcher = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

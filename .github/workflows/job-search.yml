@@ -1,0 +1,57 @@
+name: Job search
+
+on:
+  schedule:
+    # Daily at 07:00 UTC. Daily (not hourly) is a deliberate cost control —
+    # see README "Cost controls baked in".
+    - cron: "0 7 * * *"
+  workflow_dispatch: {}   # allows manual "Run workflow" from the Actions tab
+
+permissions:
+  contents: write   # needed to commit the updated dedup state file back
+  issues: write      # needed if output.open_github_issue is true in config.yaml
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Cache sentence-transformers model
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/torch/sentence_transformers
+          key: sentence-transformers-all-MiniLM-L6-v2
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run job matcher
+        env:
+          OLLAMA_API_KEY: ${{ secrets.OLLAMA_API_KEY }}
+          # GITHUB_TOKEN is provided automatically by Actions and is enough
+          # to open Issues in this same repo. Only set GH_ISSUE_TOKEN as a
+          # secret if you need a PAT instead (e.g. cross-repo issues).
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python -m job_matcher.main --config config.yaml
+
+      - name: Upload report as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: job-match-report
+          path: report.md
+
+      - name: Commit updated dedup state
+        run: |
+          git config user.name "job-matcher-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add data/seen_jobs.sqlite3
+          git diff --cached --quiet || git commit -m "chore: update seen-jobs state [skip ci]"
+          git push
