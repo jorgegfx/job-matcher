@@ -1,26 +1,31 @@
-# job-matcher configuration
-# Edit this file to point at your CV and tune what counts as a match.
+# job-matcher configuration — Raisa Haidar
+# Edit as her target roles/locations evolve.
 
 cv:
-  path: "cv/resume.pdf"          # .pdf, .docx, .txt, or .md
+  path: "cv/Raisa_Haidar_Resume.pdf"
 
 search:
   # Free-text keywords used by boards that support a query param
   # (Remotive, We Work Remotely). Case-insensitive OR match.
   keywords:
-    - "applied ai engineer"
-    - "machine learning engineer"
-    - "ai engineer"
-    - "risk engineer"
+    - "quality compliance coordinator"
+    - "compliance analyst"
+    - "data analyst"
+    - "project coordinator"
+    - "regulatory affairs coordinator"
+    - "quality assurance analyst"
 
   # A listing's title+description must contain at least one of these
   # (case-insensitive substring match) to survive the cheap first pass.
-  # Leave empty to disable.
   must_include_any:
-    - "python"
-    - "machine learning"
-    - "llm"
-    - "ai"
+    - "compliance"
+    - "quality"
+    - "data analy"
+    - "project coordinator"
+    - "power bi"
+    - "regulatory"
+    - "customer service"
+    - "administrative"
 
   # Any listing whose title+description contains one of these is dropped
   # immediately, before it ever reaches the embedding model.
@@ -29,48 +34,50 @@ search:
     - "internship"
     - "no experience"
     - "commission only"
+    - "senior director"
+    - "vice president"
 
-  # Optional: restrict to postings mentioning these locations/terms
+  # Restrict to postings mentioning these locations/terms
   # (leave empty to allow any location). Substring match, case-insensitive.
   location_include_any:
     - "remote"
     - "austin"
     - "texas"
+    - "hybrid"
 
 boards:
   remotive:
     enabled: true
-    category: "software-dev"    # see https://remotive.com/api/remote-jobs (category param)
+    category: "customer-support"   # see https://remotive.com/api/remote-jobs for category options
 
   weworkremotely:
     enabled: true
     feeds:
-      - "https://weworkremotely.com/categories/remote-programming-jobs.rss"
-      - "https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss"
+      - "https://weworkremotely.com/categories/remote-customer-support-jobs.rss"
+      - "https://weworkremotely.com/categories/remote-management-and-finance-jobs.rss"
 
   hn_hiring:
-    enabled: true
-    # HN "Who is Hiring" thread search via Algolia HN Search API
-    max_results: 100
+    enabled: false   # HN "Who is Hiring" skews heavily software-engineering; low signal for this profile
 
   greenhouse:
     enabled: true
-    # Any company using Greenhouse's public job board API.
-    # Find the token in the company's careers URL:
+    # Companies with quality/compliance/data-analyst hiring pipelines on Greenhouse.
+    # Add/remove tokens as needed — find them in a company's careers URL:
     # boards.greenhouse.io/<token>
     company_tokens:
-      - "stripe"
-      - "wise"
-      - "adyen"
+      - "pfizer"
+      - "iqvia"
+      - "veeva"
+      - "definitivehc"
 
 matching:
   embedding_model: "all-MiniLM-L6-v2"   # local, ~80MB, CPU-friendly
-  min_similarity: 0.35                    # 0-1 cosine similarity floor to keep a listing
+  min_similarity: 0.30                    # slightly lower floor — her background is cross-functional, so exact wording overlap with postings is lower
 
 llm:
   provider: "ollama_cloud"
-  model: "gpt-oss:120b"          # any model available on ollama.com/library that supports cloud
-  max_candidates: 12               # hard cap on paid LLM calls per run
+  model: "gpt-oss:120b"
+  max_candidates: 12
   temperature: 0.2
 
 state:
@@ -78,4 +85,4 @@ state:
 
 output:
   report_path: "report.md"
-  open_github_issue: true       # requires running inside GitHub Actions with issues: write
+  open_github_issue: true
