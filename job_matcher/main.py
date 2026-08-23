@@ -6,11 +6,21 @@ import sys
 from .config import Config, load_config
 from .cv_loader import load_cv_text
 from .embeddings import LocalEmbedder
-from .fetchers import GreenhouseFetcher, HNHiringFetcher, RemotiveFetcher, WeWorkRemotelyFetcher
+from .fetchers import (
+    GreenhouseFetcher,
+    HNHiringFetcher,
+    RemotiveFetcher,
+    WeWorkRemotelyFetcher,
+)
 from .fetchers.base import Fetcher, JobPosting
 from .llm import OllamaCloudClient
 from .matcher import RankedJob, keyword_filter, rank_by_similarity
-from .notify import build_report_markdown, open_github_issue, write_report
+from .notify import (
+    build_report_markdown,
+    open_github_issue,
+    send_email_report,
+    write_report,
+)
 from .state import SeenJobsStore
 
 
@@ -75,7 +85,9 @@ def run(config_path: str, use_llm: bool = True) -> None:
         print(f"Survived keyword filter: {len(filtered)}")
 
         matching_cfg = config.matching
-        embedder = LocalEmbedder(matching_cfg.get("embedding_model", "all-MiniLM-L6-v2"))
+        embedder = LocalEmbedder(
+            matching_cfg.get("embedding_model", "all-MiniLM-L6-v2")
+        )
         ranked = rank_by_similarity(
             filtered,
             cv_text=cv_text,
@@ -104,7 +116,9 @@ def run(config_path: str, use_llm: bool = True) -> None:
                 try:
                     analysis = llm_client.analyze_fit(cv_text, r.job)
                 except Exception as exc:  # noqa: BLE001
-                    print(f"LLM analysis failed for {r.job.url}: {exc}", file=sys.stderr)
+                    print(
+                        f"LLM analysis failed for {r.job.url}: {exc}", file=sys.stderr
+                    )
             results.append((r, analysis))
 
         # Mark every *fetched* new job as seen (not just the shortlisted
@@ -128,10 +142,18 @@ def run(config_path: str, use_llm: bool = True) -> None:
                 print("Opened GitHub Issue with results.")
             except Exception as exc:  # noqa: BLE001
                 print(f"Could not open GitHub Issue: {exc}", file=sys.stderr)
+        if results and config.email_recipients:
+            try:
+                send_email_report(report_md, recipients=config.email_recipients)
+                print(f"Emailed report to {', '.join(config.email_recipients)}")
+            except Exception as exc:  # noqa: BLE001
+                print(f"Could not send email report: {exc}", file=sys.stderr)
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Fetch, filter, and rank job postings against a CV.")
+    parser = argparse.ArgumentParser(
+        description="Fetch, filter, and rank job postings against a CV."
+    )
     parser.add_argument("--config", default="config.yaml", help="Path to config.yaml")
     parser.add_argument(
         "--no-llm",

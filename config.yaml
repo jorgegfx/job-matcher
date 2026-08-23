@@ -91,7 +91,7 @@ boards:
 
 matching:
   embedding_model: "all-MiniLM-L6-v2"   # local, ~80MB, CPU-friendly
-  min_similarity: 0.30                    # slightly lower floor — her background is cross-functional, so exact wording overlap with postings is lower
+  min_similarity: 0.60                    # slightly lower floor — her background is cross-functional, so exact wording overlap with postings is lower
 
 llm:
   provider: "ollama_cloud"

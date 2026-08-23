@@ -40,6 +40,12 @@ jobs:
           # to open Issues in this same repo. Only set GH_ISSUE_TOKEN as a
           # secret if you need a PAT instead (e.g. cross-repo issues).
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Only needed if output.email_recipients is non-empty in config.yaml.
+          #SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          #SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          #SMTP_USERNAME: ${{ secrets.SMTP_USERNAME }}
+          #SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          #SMTP_FROM: ${{ secrets.SMTP_FROM }}
         run: python -m job_matcher.main --config config.yaml
 
       - name: Upload report as workflow artifact

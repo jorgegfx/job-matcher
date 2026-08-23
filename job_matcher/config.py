@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, List
 
 import yaml
 
@@ -49,6 +49,12 @@ class Config:
     @property
     def open_github_issue(self) -> bool:
         return bool(self.raw.get("output", {}).get("open_github_issue", False))
+
+    @property
+    def email_recipients(self) -> list[str]:
+        # Recipients are just addresses, not secrets, so they live in
+        # config.yaml. SMTP credentials still come from env/secrets only.
+        return list(self.raw.get("output", {}).get("email_recipients", []) or [])
 
     # --- secrets, always from env, never from the yaml file ---------------------
     @property
