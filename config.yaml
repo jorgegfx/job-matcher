@@ -61,14 +61,33 @@ boards:
 
   greenhouse:
     enabled: true
-    # Companies with quality/compliance/data-analyst hiring pipelines on Greenhouse.
-    # Add/remove tokens as needed — find them in a company's careers URL:
-    # boards.greenhouse.io/<token>
+    # Companies with quality/compliance, regulatory, and data-analyst hiring
+    # pipelines on Greenhouse. Add/remove tokens as needed — find them in a
+    # company's careers URL: boards.greenhouse.io/<token>
     company_tokens:
+      # Pharma / biotech / life sciences — quality, compliance, regulatory roles
       - "pfizer"
       - "iqvia"
       - "veeva"
       - "definitivehc"
+      - "blinkhealth"
+      - "formationbio"
+      - "arspharmaceuticalsoperationsinc"
+      - "roivantsciences"
+      - "juullabs"
+      - "legendcareers"
+      - "precisionmedicinegroup"
+      - "biofourmis"
+      - "pegasuslaboratoriesinc"
+      - "acadiapharmaceuticals"
+      # Austin, TX–based or Austin-hiring — data analyst / analytics roles
+      - "yeti"
+      - "zenbusiness"
+      - "atlassand"
+      - "lightspeedsystems"
+      - "striveworks"
+      - "whitewatermidstream"
+      - "gusto"
 
 matching:
   embedding_model: "all-MiniLM-L6-v2"   # local, ~80MB, CPU-friendly
